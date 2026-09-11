@@ -244,7 +244,34 @@ function DeviceDetailPage() {
                 <img
                   src={screenshotUrl}
                   alt="Tela do aparelho"
-                  className="max-w-full max-h-full object-contain"
+                  className={`max-w-full max-h-full object-contain select-none ${isOnline ? "cursor-crosshair" : ""}`}
+                  draggable={false}
+                  onMouseDown={(e) => {
+                    if (!isOnline) return;
+                    const img = e.currentTarget;
+                    const rect = img.getBoundingClientRect();
+                    const natW = img.naturalWidth || latestScreenshot?.width || 0;
+                    const natH = img.naturalHeight || latestScreenshot?.height || 0;
+                    if (!natW || !natH) return;
+                    const toDevice = (cx: number, cy: number) => ({
+                      x: Math.round(((cx - rect.left) / rect.width) * natW),
+                      y: Math.round(((cy - rect.top) / rect.height) * natH),
+                    });
+                    const start = toDevice(e.clientX, e.clientY);
+                    const t0 = Date.now();
+                    const onUp = (ev: MouseEvent) => {
+                      window.removeEventListener("mouseup", onUp);
+                      const end = toDevice(ev.clientX, ev.clientY);
+                      const dist = Math.hypot(end.x - start.x, end.y - start.y);
+                      const duration = Date.now() - t0;
+                      if (dist < 10) {
+                        handleCommand(duration > 500 ? "long_press" : "tap", { x: start.x, y: start.y, duration });
+                      } else {
+                        handleCommand("swipe", { x: start.x, y: start.y, end_x: end.x, end_y: end.y, duration: Math.max(150, duration) });
+                      }
+                    };
+                    window.addEventListener("mouseup", onUp);
+                  }}
                 />
               ) : (
                 <div className="text-center">
@@ -264,6 +291,16 @@ function DeviceDetailPage() {
                 </div>
               )}
             </div>
+            {screenshotUrl && isOnline && (
+              <div className="px-4 py-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground gap-2 flex-wrap">
+                <span>Clique = toque · arraste = deslizar · segurar = pressionar longo</span>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" className="h-6 text-[11px]" onClick={() => handleCommand("key", { key: "back" })}>Voltar</Button>
+                  <Button variant="ghost" size="sm" className="h-6 text-[11px]" onClick={() => handleCommand("key", { key: "home" })}>Home</Button>
+                  <Button variant="ghost" size="sm" className="h-6 text-[11px]" onClick={() => handleCommand("key", { key: "recents" })}>Recentes</Button>
+                </div>
+              </div>
+            )}
           </Card>
 
           {/* Commands */}
