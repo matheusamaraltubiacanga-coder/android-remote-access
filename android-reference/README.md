@@ -137,3 +137,23 @@ Endpoints do backend consumidos (todos em `/api/public/device/*`):
 | POST   | `/screenshot`       | Envia captura (base64 PNG) |
 
 Todos usam o header `X-Device-Key: <chave-do-aparelho>`.
+
+## Publicar o APK num link de download
+
+Rode no computador (com Android Studio instalado):
+
+```bash
+cd android-reference
+./publish-apk.sh v1.0.0
+```
+
+O script compila o APK e, se a pasta estiver num repositório GitHub,
+cria a tag e dispara o GitHub Actions (`.github/workflows/build-apk.yml`),
+que publica a Release com link público:
+
+```
+https://github.com/<seu-usuario>/<repo>/releases/download/v1.0.0/kiosk-agent.apk
+```
+
+Envie esse link ao cliente — ele baixa e instala direto no Android
+(é preciso permitir "instalar apps de fontes desconhecidas").
