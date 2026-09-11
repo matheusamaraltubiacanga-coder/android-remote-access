@@ -131,19 +131,21 @@ class ScreenCaptureService : Service() {
             // Crop to actual width
             val cropped = Bitmap.createBitmap(bitmap, 0, 0, WIDTH, HEIGHT)
 
-            // Compress to JPEG
+            // Compress to PNG (backend stores as .png)
             val stream = ByteArrayOutputStream()
-            cropped.compress(Bitmap.CompressFormat.JPEG, 70, stream)
-            val jpegBytes = stream.toByteArray()
+            cropped.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val pngBytes = stream.toByteArray()
+            val outW = cropped.width
+            val outH = cropped.height
 
-            // Upload
+            // Upload as base64 JSON
             val creds = ApiClient.loadCredentials(this)
             if (creds != null) {
                 scope.launch {
                     try {
                         val client = ApiClient(creds.first, creds.second)
-                        client.uploadScreenshot(jpegBytes)
-                        Log.d(TAG, "Screenshot uploaded (${jpegBytes.size} bytes)")
+                        client.uploadScreenshot(pngBytes, outW, outH)
+                        Log.d(TAG, "Screenshot uploaded (${pngBytes.size} bytes)")
                     } catch (e: Exception) {
                         Log.e(TAG, "Upload failed", e)
                     }
