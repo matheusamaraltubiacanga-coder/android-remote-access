@@ -1,8 +1,8 @@
 name: Build e publicar APK
 
-# Compila o APK automaticamente no GitHub e publica numa Release
-# com link de download público. Basta enviar a pasta android-reference
-# para um repositório GitHub e criar uma tag (ex.: v1.0.0).
+# Compila o app Android em android-reference/ e publica uma GitHub Release
+# com link de download público. Dispara ao criar uma tag (ex.: v1.0.0)
+# ou manualmente em Actions → "Build e publicar APK".
 
 on:
   push:
@@ -25,6 +25,12 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      - name: Gerar Gradle wrapper (se ausente)
+        run: |
+          if [ ! -x ./gradlew ]; then gradle wrapper --gradle-version 8.7; fi
 
       - name: Compilar APK (release)
         run: ./gradlew assembleRelease
@@ -32,7 +38,7 @@ jobs:
       - name: Renomear APK
         run: |
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release-unsigned.apk out/kiosk-agent.apk
+          cp app/build/outputs/apk/release/app-release.apk out/kiosk-agent.apk
 
       - name: Enviar como artefato
         uses: actions/upload-artifact@v4
