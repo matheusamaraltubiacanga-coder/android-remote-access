@@ -16,6 +16,11 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedPoliciesRouteImport } from './routes/_authenticated/policies'
 import { Route as AuthenticatedStoresRouteImport } from './routes/_authenticated/stores'
 import { Route as AuthenticatedDeviceDeviceIdRouteImport } from './routes/_authenticated/device/$deviceId'
+import { Route as ApiPublicDeviceCommandResultRouteImport } from './routes/api/public/device/command-result'
+import { Route as ApiPublicDeviceCommandsRouteImport } from './routes/api/public/device/commands'
+import { Route as ApiPublicDeviceHeartbeatRouteImport } from './routes/api/public/device/heartbeat'
+import { Route as ApiPublicDeviceScreenshotRouteImport } from './routes/api/public/device/screenshot'
+import { Route as ApiPublicDeviceTelemetryRouteImport } from './routes/api/public/device/telemetry'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +57,35 @@ const AuthenticatedDeviceDeviceIdRoute =
     path: '/device/$deviceId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicDeviceCommandResultRoute =
+  ApiPublicDeviceCommandResultRouteImport.update({
+    id: '/api/public/device/command-result',
+    path: '/api/public/device/command-result',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicDeviceCommandsRoute = ApiPublicDeviceCommandsRouteImport.update({
+  id: '/api/public/device/commands',
+  path: '/api/public/device/commands',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicDeviceHeartbeatRoute =
+  ApiPublicDeviceHeartbeatRouteImport.update({
+    id: '/api/public/device/heartbeat',
+    path: '/api/public/device/heartbeat',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicDeviceScreenshotRoute =
+  ApiPublicDeviceScreenshotRouteImport.update({
+    id: '/api/public/device/screenshot',
+    path: '/api/public/device/screenshot',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicDeviceTelemetryRoute =
+  ApiPublicDeviceTelemetryRouteImport.update({
+    id: '/api/public/device/telemetry',
+    path: '/api/public/device/telemetry',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,6 +94,11 @@ export interface FileRoutesByFullPath {
   '/policies': typeof AuthenticatedPoliciesRoute
   '/stores': typeof AuthenticatedStoresRoute
   '/device/$deviceId': typeof AuthenticatedDeviceDeviceIdRoute
+  '/api/public/device/command-result': typeof ApiPublicDeviceCommandResultRoute
+  '/api/public/device/commands': typeof ApiPublicDeviceCommandsRoute
+  '/api/public/device/heartbeat': typeof ApiPublicDeviceHeartbeatRoute
+  '/api/public/device/screenshot': typeof ApiPublicDeviceScreenshotRoute
+  '/api/public/device/telemetry': typeof ApiPublicDeviceTelemetryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,6 +107,11 @@ export interface FileRoutesByTo {
   '/policies': typeof AuthenticatedPoliciesRoute
   '/stores': typeof AuthenticatedStoresRoute
   '/device/$deviceId': typeof AuthenticatedDeviceDeviceIdRoute
+  '/api/public/device/command-result': typeof ApiPublicDeviceCommandResultRoute
+  '/api/public/device/commands': typeof ApiPublicDeviceCommandsRoute
+  '/api/public/device/heartbeat': typeof ApiPublicDeviceHeartbeatRoute
+  '/api/public/device/screenshot': typeof ApiPublicDeviceScreenshotRoute
+  '/api/public/device/telemetry': typeof ApiPublicDeviceTelemetryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,14 +122,39 @@ export interface FileRoutesById {
   '/_authenticated/policies': typeof AuthenticatedPoliciesRoute
   '/_authenticated/stores': typeof AuthenticatedStoresRoute
   '/_authenticated/device/$deviceId': typeof AuthenticatedDeviceDeviceIdRoute
+  '/api/public/device/command-result': typeof ApiPublicDeviceCommandResultRoute
+  '/api/public/device/commands': typeof ApiPublicDeviceCommandsRoute
+  '/api/public/device/heartbeat': typeof ApiPublicDeviceHeartbeatRoute
+  '/api/public/device/screenshot': typeof ApiPublicDeviceScreenshotRoute
+  '/api/public/device/telemetry': typeof ApiPublicDeviceTelemetryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/dashboard' | '/policies' | '/stores' | '/device/$deviceId'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/policies'
+    | '/stores'
+    | '/device/$deviceId'
+    | '/api/public/device/command-result'
+    | '/api/public/device/commands'
+    | '/api/public/device/heartbeat'
+    | '/api/public/device/screenshot'
+    | '/api/public/device/telemetry'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/auth' | '/dashboard' | '/policies' | '/stores' | '/device/$deviceId'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/policies'
+    | '/stores'
+    | '/device/$deviceId'
+    | '/api/public/device/command-result'
+    | '/api/public/device/commands'
+    | '/api/public/device/heartbeat'
+    | '/api/public/device/screenshot'
+    | '/api/public/device/telemetry'
   id:
     | '__root__'
     | '/'
@@ -95,12 +164,22 @@ export interface FileRouteTypes {
     | '/_authenticated/policies'
     | '/_authenticated/stores'
     | '/_authenticated/device/$deviceId'
+    | '/api/public/device/command-result'
+    | '/api/public/device/commands'
+    | '/api/public/device/heartbeat'
+    | '/api/public/device/screenshot'
+    | '/api/public/device/telemetry'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicDeviceCommandResultRoute: typeof ApiPublicDeviceCommandResultRoute
+  ApiPublicDeviceCommandsRoute: typeof ApiPublicDeviceCommandsRoute
+  ApiPublicDeviceHeartbeatRoute: typeof ApiPublicDeviceHeartbeatRoute
+  ApiPublicDeviceScreenshotRoute: typeof ApiPublicDeviceScreenshotRoute
+  ApiPublicDeviceTelemetryRoute: typeof ApiPublicDeviceTelemetryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +233,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDeviceDeviceIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/device/command-result': {
+      id: '/api/public/device/command-result'
+      path: '/api/public/device/command-result'
+      fullPath: '/api/public/device/command-result'
+      preLoaderRoute: typeof ApiPublicDeviceCommandResultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/commands': {
+      id: '/api/public/device/commands'
+      path: '/api/public/device/commands'
+      fullPath: '/api/public/device/commands'
+      preLoaderRoute: typeof ApiPublicDeviceCommandsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/heartbeat': {
+      id: '/api/public/device/heartbeat'
+      path: '/api/public/device/heartbeat'
+      fullPath: '/api/public/device/heartbeat'
+      preLoaderRoute: typeof ApiPublicDeviceHeartbeatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/screenshot': {
+      id: '/api/public/device/screenshot'
+      path: '/api/public/device/screenshot'
+      fullPath: '/api/public/device/screenshot'
+      preLoaderRoute: typeof ApiPublicDeviceScreenshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/device/telemetry': {
+      id: '/api/public/device/telemetry'
+      path: '/api/public/device/telemetry'
+      fullPath: '/api/public/device/telemetry'
+      preLoaderRoute: typeof ApiPublicDeviceTelemetryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -178,6 +292,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicDeviceCommandResultRoute: ApiPublicDeviceCommandResultRoute,
+  ApiPublicDeviceCommandsRoute: ApiPublicDeviceCommandsRoute,
+  ApiPublicDeviceHeartbeatRoute: ApiPublicDeviceHeartbeatRoute,
+  ApiPublicDeviceScreenshotRoute: ApiPublicDeviceScreenshotRoute,
+  ApiPublicDeviceTelemetryRoute: ApiPublicDeviceTelemetryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
