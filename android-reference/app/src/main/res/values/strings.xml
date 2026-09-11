@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">KioskFleet Agent</string>
     <string name="accessibility_service_description">Necessário para envio de toques, deslizes e teclas remotas ao aparelho.</string>
+    <string name="accessibility_description">Necessário para envio de toques, deslizes e teclas remotas ao aparelho.</string>
 </resources>
