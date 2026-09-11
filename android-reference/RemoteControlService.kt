@@ -171,7 +171,13 @@ class RemoteControlService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        instance = this
         Log.i(TAG, "RemoteControlService connected — ready for gestures and enforcement")
+    }
+
+    override fun onDestroy() {
+        if (instance === this) instance = null
+        super.onDestroy()
     }
 
     private val androidPackage = "com.android.settings"
