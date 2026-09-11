@@ -30,6 +30,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Assina o release com a chave debug para que o APK seja instalável.
+            // Para produção em larga escala, configure uma keystore própria.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

@@ -1,0 +1,55 @@
+name: Build e publicar APK
+
+# Compila o app Android em android-reference/ e publica uma GitHub Release
+# com link de download público. Dispara ao criar uma tag (ex.: v1.0.0)
+# ou manualmente em Actions → "Build e publicar APK".
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android-reference
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      - name: Gerar Gradle wrapper (se ausente)
+        run: |
+          if [ ! -x ./gradlew ]; then gradle wrapper --gradle-version 8.7; fi
+
+      - name: Compilar APK (release)
+        run: ./gradlew assembleRelease
+
+      - name: Renomear APK
+        run: |
+          mkdir -p out
+          cp app/build/outputs/apk/release/app-release.apk out/kiosk-agent.apk
+
+      - name: Enviar como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiosk-agent-apk
+          path: android-reference/out/kiosk-agent.apk
+
+      - name: Publicar Release com link de download
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: android-reference/out/kiosk-agent.apk
+          name: Kiosk Agent ${{ github.ref_name }}
+          generate_release_notes: true
