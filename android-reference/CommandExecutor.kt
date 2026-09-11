@@ -42,13 +42,17 @@ class CommandExecutor(
                 "screenshot" -> takeScreenshot()
                 "install_app" -> installApp(cmd.payload)
                 "uninstall_app" -> uninstallApp(cmd.payload)
-                "launch_app" -> launchApp(cmd.payload)
+                "launch_app", "open_app" -> launchApp(cmd.payload)
                 "set_kiosk_mode" -> setKioskMode(cmd.payload)
                 "send_message" -> showMessage(cmd.payload)
                 "set_brightness" -> setBrightness(cmd.payload)
                 "set_volume" -> setVolume(cmd.payload)
                 "clear_cache" -> clearCache(cmd.payload)
                 "force_stop_app" -> forceStopApp(cmd.payload)
+                "tap" -> dispatchTap(cmd.payload, longPress = false)
+                "long_press" -> dispatchTap(cmd.payload, longPress = true)
+                "swipe" -> dispatchSwipe(cmd.payload)
+                "key" -> dispatchKey(cmd.payload)
                 "update_policy" -> "Policy update received (apply in KioskApp)"
                 "ping" -> "pong"
                 else -> "Unknown command: ${cmd.command_type}"
