@@ -9,7 +9,7 @@
 #    ./publish-apk.sh v1.0.0
 #
 #  O que o script faz:
-#    1. Compila o APK (app-release-unsigned.apk)
+#    1. Compila o APK (app-release.apk)
 #    2. Copia para out/kiosk-agent.apk
 #    3. Se a pasta estiver num repositório GitHub, cria a tag
 #       e envia — o GitHub Actions (.github/workflows/build-apk.yml)
@@ -34,7 +34,7 @@ fi
 ./gradlew assembleRelease
 
 mkdir -p "$OUT_DIR"
-cp app/build/outputs/apk/release/app-release-unsigned.apk "$APK_OUT"
+cp app/build/outputs/apk/release/app-release.apk "$APK_OUT"
 
 echo ""
 echo "✅ APK pronto: $APK_OUT"
