@@ -32,7 +32,9 @@ class RemoteControlService : AccessibilityService() {
     companion object {
         private const val TAG = "RemoteControl"
 
-        /** Pending gesture to execute (set by KioskService) */
+        @Volatile private var instance: RemoteControlService? = null
+
+        /** Pending gesture to execute (set by CommandExecutor) */
         @Volatile
         var pendingGesture: GestureRequest? = null
 
@@ -45,6 +47,11 @@ class RemoteControlService : AccessibilityService() {
 
         /** Kiosk mode enforcement active */
         var enforceKiosk: Boolean = false
+
+        /** Execute any pending gesture/key immediately without waiting for an a11y event. */
+        fun wake() {
+            instance?.drainPending()
+        }
     }
 
     data class GestureRequest(
@@ -75,13 +82,14 @@ class RemoteControlService : AccessibilityService() {
             }
         }
 
-        // Execute pending gesture
+        drainPending()
+    }
+
+    private fun drainPending() {
         pendingGesture?.let { gesture ->
             pendingGesture = null
             executeGesture(gesture)
         }
-
-        // Execute pending key action
         pendingKeyAction?.let { action ->
             pendingKeyAction = null
             when (action) {
@@ -163,7 +171,13 @@ class RemoteControlService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        instance = this
         Log.i(TAG, "RemoteControlService connected — ready for gestures and enforcement")
+    }
+
+    override fun onDestroy() {
+        if (instance === this) instance = null
+        super.onDestroy()
     }
 
     private val androidPackage = "com.android.settings"

@@ -20,7 +20,7 @@
         android:name=".KioskApp"
         android:label="KioskFleet Agent"
         android:icon="@mipmap/ic_launcher"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+        android:theme="@style/Theme.KioskFleet"
         android:allowBackup="false"
         android:supportsRtl="true">
 

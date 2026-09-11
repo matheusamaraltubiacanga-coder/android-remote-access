@@ -49,13 +49,18 @@ class ApiClient(
         json.decodeFromString(res.body!!.string())
     }
 
-    /** Poll pending commands */
-    suspend fun fetchCommands(): List<DeviceCommand> = withContext(Dispatchers.IO) {
-        val body = buildJsonObject {}.toString()
-        val res = client.newCall(request("/api/public/device/commands", body)).execute()
+    /** Poll pending commands. Backend returns { commands: [...], kiosk_mode, policy }. */
+    suspend fun fetchCommands(): CommandsResponse = withContext(Dispatchers.IO) {
+        // Backend uses GET for /commands (see routes/api/public/device/commands.ts)
+        val req = Request.Builder()
+            .url("$baseUrl/api/public/device/commands")
+            .header("X-Device-Key", apiKey)
+            .get()
+            .build()
+        val res = client.newCall(req).execute()
         if (!res.isSuccessful) throw Exception("Commands fetch failed: ${res.code}")
         val text = res.body!!.string()
-        if (text.isBlank()) return@withContext emptyList()
+        if (text.isBlank()) return@withContext CommandsResponse()
         json.decodeFromString(text)
     }
 
@@ -74,17 +79,19 @@ class ApiClient(
         if (!res.isSuccessful) throw Exception("Command result report failed: ${res.code}")
     }
 
-    /** Upload screenshot (raw bytes) */
+    /** Upload screenshot as base64 in JSON (backend expects { image_base64, width, height }). */
     suspend fun uploadScreenshot(
-        jpegBytes: ByteArray,
+        pngBytes: ByteArray,
+        width: Int,
+        height: Int,
     ) = withContext(Dispatchers.IO) {
-        val req = Request.Builder()
-            .url("$baseUrl/api/public/device/screenshot")
-            .header("X-Device-Key", apiKey)
-            .header("Content-Type", "image/jpeg")
-            .post(jpegBytes.toRequestBody("image/jpeg".toMediaType()))
-            .build()
-        val res = client.newCall(req).execute()
+        val b64 = android.util.Base64.encodeToString(pngBytes, android.util.Base64.NO_WRAP)
+        val body = buildJsonObject {
+            put("image_base64", b64)
+            put("width", width)
+            put("height", height)
+        }.toString()
+        val res = client.newCall(request("/api/public/device/screenshot", body)).execute()
         if (!res.isSuccessful) throw Exception("Screenshot upload failed: ${res.code}")
     }
 
@@ -99,10 +106,17 @@ class ApiClient(
     data class HeartbeatResponse(val ok: Boolean = false)
 
     @Serializable
+    data class CommandsResponse(
+        val commands: List<DeviceCommand> = emptyList(),
+        val kiosk_mode: Boolean = false,
+        val policy: JsonObject? = null,
+    )
+
+    @Serializable
     data class DeviceCommand(
         val id: String,
         val command_type: String,
-        val payload: String? = null,
+        val payload: JsonObject? = null,
     )
 
     @Serializable

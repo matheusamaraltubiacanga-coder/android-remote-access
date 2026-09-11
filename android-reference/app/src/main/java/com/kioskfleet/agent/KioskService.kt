@@ -94,8 +94,9 @@ class KioskService : Service() {
         scope.launch {
             while (true) {
                 try {
-                    val commands = apiClient.fetchCommands()
-                    for (cmd in commands) {
+                    val resp = apiClient.fetchCommands()
+                    RemoteControlService.enforceKiosk = resp.kiosk_mode
+                    for (cmd in resp.commands) {
                         commandExecutor.execute(cmd)
                     }
                 } catch (e: Exception) {
