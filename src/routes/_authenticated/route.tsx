@@ -12,16 +12,13 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: async ({ location }) => {
-    if (typeof window !== "undefined") {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw redirect({
-          to: "/auth",
-          search: { redirect: location.pathname },
-        });
-      }
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw redirect({ to: "/auth" });
     }
+    return { user: data.user };
   },
   component: AuthenticatedLayout,
 });
