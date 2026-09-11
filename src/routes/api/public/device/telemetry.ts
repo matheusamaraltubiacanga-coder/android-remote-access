@@ -56,8 +56,6 @@ export const Route = createFileRoute("/api/public/device/telemetry")({
           longitude: parsed.data.longitude ?? null,
           wifi_strength: parsed.data.wifi_strength ?? null,
           uptime_seconds: parsed.data.uptime_seconds ?? null,
-          android_version: parsed.data.android_version ?? null,
-          model: parsed.data.model ?? null,
         });
 
         // Update device summary fields
