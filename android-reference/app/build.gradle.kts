@@ -15,9 +15,12 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        // Pass backend config via BuildConfig or let user enter in app
         buildConfigField("String", "DEFAULT_BASE_URL", "\"\"")
         buildConfigField("String", "DEFAULT_API_KEY", "\"\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
