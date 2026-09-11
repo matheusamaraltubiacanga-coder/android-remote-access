@@ -61,14 +61,26 @@ export const Route = createFileRoute("/api/public/device/telemetry")({
         });
 
         // Update device summary fields
-        const updateData = {
+        const updateData: {
+          last_seen_at: string;
+          status: string;
+          battery_level?: number | null;
+          current_app?: string | null;
+          android_version?: string | null;
+          model?: string | null;
+        } = {
           last_seen_at: new Date().toISOString(),
-          status: "online" as const,
-          ...(parsed.data.battery_level !== undefined && { battery_level: parsed.data.battery_level }),
-          ...(parsed.data.current_app !== undefined && { current_app: parsed.data.current_app }),
-          ...(parsed.data.android_version !== undefined && { android_version: parsed.data.android_version }),
-          ...(parsed.data.model !== undefined && { model: parsed.data.model }),
+          status: "online",
         };
+
+        if (parsed.data.battery_level !== undefined)
+          updateData.battery_level = parsed.data.battery_level;
+        if (parsed.data.current_app !== undefined)
+          updateData.current_app = parsed.data.current_app;
+        if (parsed.data.android_version !== undefined)
+          updateData.android_version = parsed.data.android_version;
+        if (parsed.data.model !== undefined)
+          updateData.model = parsed.data.model;
 
         await supabaseAdmin.from("devices").update(updateData).eq("id", device.id);
 
