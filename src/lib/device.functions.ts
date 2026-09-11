@@ -28,22 +28,24 @@ export const getDashboardStats = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data: devices } = await context.supabase
       .from("devices")
-      .select("status, battery_level, kiosk_mode")
+      .select("id, status, battery_level, kiosk_mode")
       .eq("user_id", context.userId);
 
+    const deviceIds = devices?.map((d) => d.id) ?? [];
     const total = devices?.length ?? 0;
     const online = devices?.filter((d) => d.status === "online").length ?? 0;
     const offline = devices?.filter((d) => d.status === "offline").length ?? 0;
     const kiosk = devices?.filter((d) => d.kiosk_mode).length ?? 0;
 
-    const { count: pendingCommands } = await context.supabase
-      .from("device_commands")
-      .select("id", { count: "exact", head: true })
-      .in(
-        "device_id",
-        devices?.map((d) => d.id) ?? [],
-      )
-      .eq("status", "pending");
+    let pendingCommands = 0;
+    if (deviceIds.length > 0) {
+      const { count } = await context.supabase
+        .from("device_commands")
+        .select("id", { count: "exact", head: true })
+        .in("device_id", deviceIds)
+        .eq("status", "pending");
+      pendingCommands = count ?? 0;
+    }
 
     return { total, online, offline, kiosk, pendingCommands: pendingCommands ?? 0 };
   });
@@ -160,7 +162,6 @@ export const registerDevice = createServerFn({ method: "POST" })
         store_id: data.storeId ?? null,
         policy_id: data.policyId ?? null,
         user_id: context.userId,
-        api_key: undefined, // let DB default generate it
       })
       .select("*")
       .single();
@@ -180,15 +181,16 @@ export const updateDevice = createServerFn({ method: "POST" })
   )
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
-    const updates: Record<string, unknown> = {};
-    if (data.deviceName !== undefined) updates.device_name = data.deviceName;
-    if (data.storeId !== undefined) updates.store_id = data.storeId;
-    if (data.policyId !== undefined) updates.policy_id = data.policyId;
-    if (data.kioskMode !== undefined) updates.kiosk_mode = data.kioskMode;
+    const updateData = {
+      ...(data.deviceName !== undefined && { device_name: data.deviceName }),
+      ...(data.storeId !== undefined && { store_id: data.storeId }),
+      ...(data.policyId !== undefined && { policy_id: data.policyId }),
+      ...(data.kioskMode !== undefined && { kiosk_mode: data.kioskMode }),
+    };
 
     const { data: device, error } = await context.supabase
       .from("devices")
-      .update(updates)
+      .update(updateData)
       .eq("id", data.deviceId)
       .eq("user_id", context.userId)
       .select("*")
@@ -226,8 +228,8 @@ export const createStore = createServerFn({ method: "POST" })
       .insert({
         name: data.name,
         address: data.address ?? null,
-        lat: data.lat,
-        lng: data.lng,
+        lat: data.lat ?? null,
+        lng: data.lng ?? null,
         user_id: context.userId,
       })
       .select("*")

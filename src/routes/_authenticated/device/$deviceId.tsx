@@ -410,7 +410,7 @@ function DeviceDetailPage() {
                 icon={<HardDrive className="w-4 h-4 text-muted-foreground" />}
                 label="Armazenamento"
                 value={
-                  telemetry?.storage_used_mb != null
+                  telemetry?.storage_used_mb != null && telemetry?.storage_total_mb != null
                     ? `${(telemetry.storage_used_mb / 1024).toFixed(1)}/${(telemetry.storage_total_mb / 1024).toFixed(1)} GB`
                     : "—"
                 }

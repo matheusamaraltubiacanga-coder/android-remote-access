@@ -96,9 +96,11 @@ function DashboardPage() {
     setCreating(true);
     try {
       const device = await register({
-        deviceName: newDevice.deviceName,
-        model: newDevice.model || undefined,
-        serialNumber: newDevice.serialNumber || undefined,
+        data: {
+          deviceName: newDevice.deviceName,
+          model: newDevice.model || undefined,
+          serialNumber: newDevice.serialNumber || undefined,
+        },
       });
       setCreatedDevice(device);
       queryClient.invalidateQueries({ queryKey: ["devices"] });
