@@ -88,7 +88,9 @@ function DeviceDetailPage() {
         () => queryClient.invalidateQueries({ queryKey: ["device", deviceId] }),
       )
       .subscribe();
-    return () => supabase.removeChannel(channel);
+    return () => {
+      void supabase.removeChannel(channel);
+    };
   }, [deviceId, queryClient]);
 
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);

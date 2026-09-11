@@ -39,26 +39,38 @@ export const Route = createFileRoute("/api/public/device/telemetry")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        // Insert telemetry record
+        // Insert telemetry record with explicit null coalescing for optional fields
         await supabaseAdmin.from("device_telemetry").insert({
           device_id: device.id,
-          ...parsed.data,
+          battery_level: parsed.data.battery_level ?? null,
+          battery_charging: parsed.data.battery_charging ?? null,
+          cpu_usage: parsed.data.cpu_usage ?? null,
+          memory_used_mb: parsed.data.memory_used_mb ?? null,
+          memory_total_mb: parsed.data.memory_total_mb ?? null,
+          storage_used_mb: parsed.data.storage_used_mb ?? null,
+          storage_total_mb: parsed.data.storage_total_mb ?? null,
+          current_app: parsed.data.current_app ?? null,
+          network_type: parsed.data.network_type ?? null,
+          ip_address: parsed.data.ip_address ?? null,
+          latitude: parsed.data.latitude ?? null,
+          longitude: parsed.data.longitude ?? null,
+          wifi_strength: parsed.data.wifi_strength ?? null,
+          uptime_seconds: parsed.data.uptime_seconds ?? null,
+          android_version: parsed.data.android_version ?? null,
+          model: parsed.data.model ?? null,
         });
 
         // Update device summary fields
-        const updates: Record<string, unknown> = {
+        const updateData = {
           last_seen_at: new Date().toISOString(),
-          status: "online",
+          status: "online" as const,
+          ...(parsed.data.battery_level !== undefined && { battery_level: parsed.data.battery_level }),
+          ...(parsed.data.current_app !== undefined && { current_app: parsed.data.current_app }),
+          ...(parsed.data.android_version !== undefined && { android_version: parsed.data.android_version }),
+          ...(parsed.data.model !== undefined && { model: parsed.data.model }),
         };
-        if (parsed.data.battery_level !== undefined)
-          updates.battery_level = parsed.data.battery_level;
-        if (parsed.data.current_app !== undefined)
-          updates.current_app = parsed.data.current_app;
-        if (parsed.data.android_version !== undefined)
-          updates.android_version = parsed.data.android_version;
-        if (parsed.data.model !== undefined) updates.model = parsed.data.model;
 
-        await supabaseAdmin.from("devices").update(updates).eq("id", device.id);
+        await supabaseAdmin.from("devices").update(updateData).eq("id", device.id);
 
         return Response.json({ ok: true });
       },
