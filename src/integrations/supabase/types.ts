@@ -14,7 +14,291 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      device_commands: {
+        Row: {
+          command_type: string
+          created_at: string
+          delivered_at: string | null
+          device_id: string
+          executed_at: string | null
+          id: string
+          payload: Json
+          result: Json | null
+          status: string
+        }
+        Insert: {
+          command_type: string
+          created_at?: string
+          delivered_at?: string | null
+          device_id: string
+          executed_at?: string | null
+          id?: string
+          payload?: Json
+          result?: Json | null
+          status?: string
+        }
+        Update: {
+          command_type?: string
+          created_at?: string
+          delivered_at?: string | null
+          device_id?: string
+          executed_at?: string | null
+          id?: string
+          payload?: Json
+          result?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_commands_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      device_screenshots: {
+        Row: {
+          created_at: string
+          device_id: string
+          height: number | null
+          id: string
+          storage_path: string
+          width: number | null
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          height?: number | null
+          id?: string
+          storage_path: string
+          width?: number | null
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          height?: number | null
+          id?: string
+          storage_path?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_screenshots_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      device_telemetry: {
+        Row: {
+          battery_charging: boolean | null
+          battery_level: number | null
+          cpu_usage: number | null
+          created_at: string
+          current_app: string | null
+          device_id: string
+          id: string
+          ip_address: string | null
+          latitude: number | null
+          longitude: number | null
+          memory_total_mb: number | null
+          memory_used_mb: number | null
+          network_type: string | null
+          storage_total_mb: number | null
+          storage_used_mb: number | null
+          uptime_seconds: number | null
+          wifi_strength: number | null
+        }
+        Insert: {
+          battery_charging?: boolean | null
+          battery_level?: number | null
+          cpu_usage?: number | null
+          created_at?: string
+          current_app?: string | null
+          device_id: string
+          id?: string
+          ip_address?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          memory_total_mb?: number | null
+          memory_used_mb?: number | null
+          network_type?: string | null
+          storage_total_mb?: number | null
+          storage_used_mb?: number | null
+          uptime_seconds?: number | null
+          wifi_strength?: number | null
+        }
+        Update: {
+          battery_charging?: boolean | null
+          battery_level?: number | null
+          cpu_usage?: number | null
+          created_at?: string
+          current_app?: string | null
+          device_id?: string
+          id?: string
+          ip_address?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          memory_total_mb?: number | null
+          memory_used_mb?: number | null
+          network_type?: string | null
+          storage_total_mb?: number | null
+          storage_used_mb?: number | null
+          uptime_seconds?: number | null
+          wifi_strength?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_telemetry_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devices: {
+        Row: {
+          android_version: string | null
+          api_key: string
+          battery_level: number | null
+          created_at: string
+          current_app: string | null
+          device_name: string
+          id: string
+          kiosk_mode: boolean
+          last_seen_at: string | null
+          model: string | null
+          policy_id: string | null
+          serial_number: string | null
+          status: string
+          store_id: string | null
+          user_id: string
+        }
+        Insert: {
+          android_version?: string | null
+          api_key?: string
+          battery_level?: number | null
+          created_at?: string
+          current_app?: string | null
+          device_name: string
+          id?: string
+          kiosk_mode?: boolean
+          last_seen_at?: string | null
+          model?: string | null
+          policy_id?: string | null
+          serial_number?: string | null
+          status?: string
+          store_id?: string | null
+          user_id?: string
+        }
+        Update: {
+          android_version?: string | null
+          api_key?: string
+          battery_level?: number | null
+          created_at?: string
+          current_app?: string | null
+          device_name?: string
+          id?: string
+          kiosk_mode?: boolean
+          last_seen_at?: string | null
+          model?: string | null
+          policy_id?: string | null
+          serial_number?: string | null
+          status?: string
+          store_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devices_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "kiosk_policies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "devices_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kiosk_policies: {
+        Row: {
+          allowed_apps: Json
+          blocked_apps: Json
+          created_at: string
+          disable_play_store: boolean
+          disable_settings: boolean
+          id: string
+          lock_screen: boolean
+          name: string
+          user_id: string
+          volume_limit: number | null
+        }
+        Insert: {
+          allowed_apps?: Json
+          blocked_apps?: Json
+          created_at?: string
+          disable_play_store?: boolean
+          disable_settings?: boolean
+          id?: string
+          lock_screen?: boolean
+          name: string
+          user_id?: string
+          volume_limit?: number | null
+        }
+        Update: {
+          allowed_apps?: Json
+          blocked_apps?: Json
+          created_at?: string
+          disable_play_store?: boolean
+          disable_settings?: boolean
+          id?: string
+          lock_screen?: boolean
+          name?: string
+          user_id?: string
+          volume_limit?: number | null
+        }
+        Relationships: []
+      }
+      stores: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          user_id?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
