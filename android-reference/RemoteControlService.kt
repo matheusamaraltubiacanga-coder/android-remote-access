@@ -82,13 +82,14 @@ class RemoteControlService : AccessibilityService() {
             }
         }
 
-        // Execute pending gesture
+        drainPending()
+    }
+
+    private fun drainPending() {
         pendingGesture?.let { gesture ->
             pendingGesture = null
             executeGesture(gesture)
         }
-
-        // Execute pending key action
         pendingKeyAction?.let { action ->
             pendingKeyAction = null
             when (action) {
